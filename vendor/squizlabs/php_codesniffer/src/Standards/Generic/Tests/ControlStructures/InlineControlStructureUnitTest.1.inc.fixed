@@ -188,7 +188,7 @@ if ($bar) {
     }
 }
 
-if ($level == 'district') {
+if ($level == 'amphure') {
     \DB::update(<<<EOD
 some
 text
@@ -197,7 +197,7 @@ EOD
     );
 }
 
-if ($level == 'district') {
+if ($level == 'amphure') {
     $var = <<<EOD
 some
 text

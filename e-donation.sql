@@ -37,8 +37,8 @@ CREATE TABLE `donat` (
   `phone` varchar(20) DEFAULT NULL,
   `amount` decimal(10,2) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `subdistrict` varchar(100) DEFAULT NULL,
-  `district` varchar(100) DEFAULT NULL,
+  `subอ.` varchar(100) DEFAULT NULL,
+  `อ.` varchar(100) DEFAULT NULL,
   `province` varchar(100) DEFAULT NULL,
   `gift` tinyint(1) DEFAULT NULL,
   `cc_email` tinyint(1) DEFAULT NULL,
@@ -62,8 +62,8 @@ CREATE TABLE `donat_user` (
   `phone` varchar(20) DEFAULT NULL,
   `amount` decimal(10,2) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
-  `subdistrict` varchar(100) DEFAULT NULL,
-  `district` varchar(100) DEFAULT NULL,
+  `subอ.` varchar(100) DEFAULT NULL,
+  `อ.` varchar(100) DEFAULT NULL,
   `province` varchar(100) DEFAULT NULL,
   `gift` tinyint(1) DEFAULT NULL,
   `cc_email` tinyint(1) DEFAULT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE `donat_user` (
 -- Dumping data for table `donat_user`
 --
 
-INSERT INTO `donat_user` (`id`, `billPaymentRef1`, `type`, `email`, `phone`, `amount`, `address`, `subdistrict`, `district`, `province`, `gift`, `cc_email`, `project_number`, `project_name`, `status_donat`, `created_at`) VALUES
+INSERT INTO `donat_user` (`id`, `billPaymentRef1`, `type`, `email`, `phone`, `amount`, `address`, `subอ.`, `อ.`, `province`, `gift`, `cc_email`, `project_number`, `project_name`, `status_donat`, `created_at`) VALUES
 (320, '671212050000320', 'ศิษย์เก่า', 'cstandbrooke0@usatoday.com', '1234567890', 1000.00, '', '', '', '', 0, 1, '121205', 'บริจาคเพื่อการศึกษา เพื่อเป็นทุนการศึกษานักศึกษาพยาบาลศาสตร์  มหาวิทยาลัยเชียงใหม่', 'online', '2024-09-26 08:22:19');
 
 -- --------------------------------------------------------

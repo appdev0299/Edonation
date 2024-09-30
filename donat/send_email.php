@@ -38,7 +38,7 @@ if (!empty($email_receiver)) {
         <meta charset='utf-8'>
     </head>
     <body>
-        <h1 style='background: #FF6A00; padding: 10px 0 10px 10px; margin-bottom: 10px; font-size: 20px; color: white;'>
+        <h1 style='background: #fb974e; padding: 10px 0 10px 10px; margin-bottom: 10px; font-size: 20px; color: white;'>
             NurseCMUE-Donation
         </h1>
         <div style='padding: 20px;'>

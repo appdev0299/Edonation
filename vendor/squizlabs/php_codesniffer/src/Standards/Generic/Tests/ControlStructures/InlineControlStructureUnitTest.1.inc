@@ -167,7 +167,7 @@ foreach ($sql as $s)
 if ($bar)
     if ($foo) echo 'hi'; // lol
 
-if ($level == 'district')
+if ($level == 'amphure')
     \DB::update(<<<EOD
 some
 text
@@ -175,7 +175,7 @@ here
 EOD
     );
 
-if ($level == 'district')
+if ($level == 'amphure')
     $var = <<<EOD
 some
 text

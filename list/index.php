@@ -30,28 +30,30 @@ include_once('../config/head.php');
                                 <tbody>
                                     <?php
                                     require_once '../config/connect.php';
-                                    $stmt = $pdo->prepare("SELECT * FROM `donat` ORDER BY `id` ASC");
+                                    // ใช้ ORDER BY id DESC เพื่อเรียงลำดับจากมากไปน้อย
+                                    $stmt = $pdo->prepare("SELECT * FROM `donat` ORDER BY id DESC");
                                     $stmt->execute();
-                                    $result = $stmt->fetchAll();
-                                    $result = array_reverse($result);
-                                    $countrow = 1;
+                                    $result = $stmt->fetchAll(); // ดึงข้อมูลทั้งหมด
+                                    $countrow = 1; // ตัวแปรนับลำดับ
                                     foreach ($result as $t1) {
                                     ?>
                                         <tr>
                                             <td><?= $countrow ?></td>
-                                            <td><?= $t1['payerAccountName']; ?></td>
-                                            <td><?= $t1['project_name']; ?></td>
+                                            <td><?= htmlspecialchars($t1['payerAccountName']); ?></td>
+                                            <td><?= htmlspecialchars($t1['project_name']); ?></td>
                                             <td>
-                                                <a href="#" class="btn btn__secondary btn__link">
+                                                <a href="pdf_maker.php?id=<?= htmlspecialchars($t1['id']); ?>" class="btn btn__secondary btn__link">
                                                     <i class="icon-arrow-right icon-filled"></i>
                                                     <span>เปิด</span>
                                                 </a>
                                             </td>
                                         </tr>
-                                    <?php $countrow++;
+                                    <?php
+                                        $countrow++; // เพิ่มค่าลำดับ
                                     }
                                     ?>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>

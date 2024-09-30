@@ -90,9 +90,10 @@ include_once('../config/head.php');
                                         <div class="col-sm-6 col-md-6 col-lg-6">
                                             <div class="form-group">
                                                 <i class="fas fa-coins form-group-icon"></i>
-                                                <input type="number" class="form-control" placeholder="จำนวนเงิน" id="amount" name="amount">
+                                                <input type="number" class="form-control" placeholder="จำนวนเงิน" id="amount" name="amount" step="0.01">
                                             </div>
                                         </div>
+
 
                                         <div class="col-sm-6 col-md-12 col-lg-12" id="address-section" style="display: none;">
                                             <div class="row">
@@ -102,25 +103,58 @@ include_once('../config/head.php');
                                                         <input type="text" class="form-control" placeholder="เลขที่" id="address" name="address">
                                                     </div>
                                                 </div>
-
+                                                <?php
+                                                // Fetch provinces using PDO
+                                                try {
+                                                    $sql = "SELECT * FROM provinces";
+                                                    $stmt = $pdo->prepare($sql);
+                                                    $stmt->execute();
+                                                    $provinces = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                } catch (PDOException $e) {
+                                                    echo "
+                                                            <script>
+                                                                Swal.fire({
+                                                                    icon: 'error',
+                                                                    title: 'เกิดข้อผิดพลาดในการดึงข้อมูลจังหวัด',
+                                                                    text: '" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "',
+                                                                    confirmButtonColor: '#ffaa00'
+                                                                });
+                                                            </script>
+                                                        ";
+                                                    exit(); // หยุดการทำงานหากดึงข้อมูลไม่ได้
+                                                }
+                                                ?>
                                                 <div class="col-sm-12 col-md-12 col-lg-6">
                                                     <div class="form-group">
                                                         <i class="icon-location form-group-icon"></i>
-                                                        <input type="text" class="form-control" placeholder="ตำบล" id="subdistrict" name="subdistrict">
+                                                        <select class="form-control" name="province" id="province">
+                                                            <option value="">เลือกจังหวัด</option>
+                                                            <?php foreach ($provinces as $result): ?>
+                                                                <option value="<?= htmlspecialchars($result['id'], ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($result['name_th'], ENT_QUOTES, 'UTF-8') ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-sm-6 col-md-12 col-lg-6">
+                                                <div class="col-sm-12 col-md-12 col-lg-6">
                                                     <div class="form-group">
                                                         <i class="icon-location form-group-icon"></i>
-                                                        <input type="text" class="form-control" placeholder="อำเภอ" id="district" name="district">
+                                                        <select class="form-control" name="amphure" id="amphure">
+                                                            <option value="">เลือกอำเภอ</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-sm-6 col-md-12 col-lg-6">
+                                                <div class="col-sm-12 col-md-12 col-lg-6">
                                                     <div class="form-group">
                                                         <i class="icon-location form-group-icon"></i>
-                                                        <input type="text" class="form-control" placeholder="จังหวัด" id="province" name="province">
+                                                        <select class="form-control" name="district" id="district">
+                                                            <option value="">เลือกตำบล</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="form-group">
+                                                        <i class="icon-location form-group-icon"></i>
+                                                        <input type="number" class="form-control" placeholder="รหัสไปรษณีย์" id="zip_code" name="zip_code">
                                                     </div>
                                                 </div>
                                             </div>
@@ -300,6 +334,8 @@ include_once('../config/head.php');
     <script src="../assets/js/jquery-3.5.1.min.js"></script>
     <script src="../assets/js/plugins.js"></script>
     <script src="../assets/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script_province.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <!-- <script>
@@ -310,8 +346,8 @@ include_once('../config/head.php');
             var amount = document.getElementById('amount').value;
             var giftChecked = document.getElementById('gift').checked;
             var address = document.getElementById('address').value;
-            var subdistrict = document.getElementById('subdistrict').value;
             var district = document.getElementById('district').value;
+            var amphure = document.getElementById('amphure').value;
             var province = document.getElementById('province').value;
 
             if (!type || !email || !phone || !amount) {
@@ -326,7 +362,7 @@ include_once('../config/head.php');
             }
 
             if (giftChecked) {
-                if (!address || !subdistrict || !district || !province) {
+                if (!address || !district || !amphure || !province) {
                     Swal.fire({
                         icon: 'error',
                         title: 'กรุณากรอกข้อมูลที่อยู่ให้ครบถ้วน',

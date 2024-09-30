@@ -22,19 +22,19 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            $copy_sql = "INSERT INTO donat (billPaymentRef1, type, email, phone, amount, address, subdistrict, district, province, gift, cc_email, project_number, project_name, created_at, payerAccountName, billPaymentRef2) 
-                         SELECT du.billPaymentRef1, du.type, du.email, du.phone, du.amount, du.address, du.subdistrict, du.district, du.province, du.gift, du.cc_email, du.project_number, du.project_name, du.created_at, jd.payerAccountName, jd.billPaymentRef2 
-                         FROM donat_user du
-                         JOIN json_donat jd ON du.billPaymentRef1 = jd.billPaymentRef1
-                         WHERE du.billPaymentRef1 = :billPaymentRef1";
+            $copy_sql = "INSERT INTO donat (billPaymentRef1, type, email, phone, amount, address, district, amphure, province, zip_code, gift, cc_email, project_number, project_name, created_at, payby, payerAccountName, billPaymentRef2) 
+             SELECT du.billPaymentRef1, du.type, du.email, du.phone, du.amount, du.address, du.district, du.amphure, du.province, du.zip_code, du.gift, du.cc_email, du.project_number, du.project_name, du.created_at, du.payby, jd.payerAccountName, jd.billPaymentRef2
+             FROM donat_user du
+             JOIN json_donat jd ON du.billPaymentRef1 = jd.billPaymentRef1
+             WHERE du.billPaymentRef1 = :billPaymentRef1";
             $copy_stmt = $pdo->prepare($copy_sql);
             $copy_stmt->bindParam(':billPaymentRef1', $billPaymentRef1);
 
             if ($copy_stmt->execute()) {
                 if ($copy_stmt->rowCount() > 0) {
                     // ดึงข้อมูลจากตาราง donat
-                    $last_insert_id = $pdo->lastInsertId(); // รับ ID ล่าสุดที่ถูกแทรก
-                    $select_sql = "SELECT billPaymentRef1, payerAccountName, amount, email, project_name 
+                    $last_insert_id = $pdo->lastInsertId();
+                    $select_sql = "SELECT billPaymentRef1, payerAccountName, amount, email, project_name, id,created_at 
                                    FROM donat 
                                    WHERE id = :id";
                     $select_stmt = $pdo->prepare($select_sql);
@@ -64,6 +64,24 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
 
                         $mail->Subject = 'Thank You for Your Donation'; // กำหนดหัวข้อของอีเมล
 
+                        // แปลงวันที่ให้เป็นภาษาไทย
+                        $created_at = $donat_data['created_at'] ?? null;
+                        if ($created_at) {
+                            // สร้าง DateTime object
+                            $dateTime = new DateTime($created_at);
+
+                            // ตั้งค่าภาษาไทย
+                            setlocale(LC_TIME, 'th_TH.UTF-8');
+
+                            // แปลงวันที่เป็นปี พ.ศ. และรูปแบบ dd/mm/yyyy
+                            $thai_date = $dateTime->format('d') . ' ' .
+                                strftime('%B', $dateTime->getTimestamp()) . ' ' .
+                                ($dateTime->format('Y') + 543); // เพิ่ม 543 เพื่อแปลงเป็นปี พ.ศ.
+                        } else {
+                            $thai_date = 'ไม่ทราบวันที่';
+                        }
+
+                        // สร้างอีเมล
                         $mail->Body = '
                                         <!DOCTYPE html>
                                         <html lang="th">
@@ -105,24 +123,44 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
                                                     font-size: 12px;
                                                     color: #777;
                                                 }
+                                                .btn {
+                                                    display: inline-block;
+                                                    padding: 10px 15px;
+                                                    background-color: #ffaa00; /* สีพื้นหลังของปุ่ม */
+                                                    color: white; /* สีของข้อความ */
+                                                    text-decoration: none; /* ไม่มีขีดเส้นใต้ */
+                                                    border-radius: 5px; /* ขอบมน */
+                                                    text-align: center; /* จัดให้อยู่กลาง */
+                                                    font-weight: bold; /* ตัวหนา */
+                                                    transition: background-color 0.3s; /* เอฟเฟกต์การเปลี่ยนสี */
+                                                }
+                                                .btn:hover {
+                                                    background-color: #f0d193; /* สีเมื่อชี้เมาส์ */
+                                                }
                                             </style>
                                         </head>
                                         <body>
                                             <div class="container">
                                                 <h1>ขอบคุณสำหรับการบริจาคของคุณ!</h1>
                                                 <p>รายละเอียดการบริจาคของคุณ:</p>
-                                                <p>Bill Payment Reference: <span class="highlight">' . $donat_data['billPaymentRef1'] . '</span></p>
-                                                <p>Amount: <span class="highlight">' . number_format($donat_data['amount'], 2) . ' บาท</span></p>
-                                                <p>Payer Account Name: <span class="highlight">' . $donat_data['payerAccountName'] . '</span></p>
-                                                <p>Project Name: <span class="highlight">' . $donat_data['project_name'] . '</span></p>
+                                                <p>เลขอ้างอิง : <span class="highlight">' . htmlspecialchars($donat_data['billPaymentRef1']) . '</span></p>
+                                                <p>จำนวนเงิน : <span class="highlight">' . number_format($donat_data['amount'], 2) . ' บาท</span></p>
+                                                <p>จาก : <span class="highlight">' . htmlspecialchars($donat_data['payerAccountName']) . '</span></p>
+                                                <p>โครงการ : <span class="highlight">' . htmlspecialchars($donat_data['project_name']) . '</span></p>
+                                                <p>วันที่ : <span class="highlight">' . htmlspecialchars($thai_date) . '</span></p>
+                                                <p>
+                                                    <a href="http://localhost/github-appdev/Edonation/list/pdf_maker.php?id=' . htmlspecialchars($donat_data['id']) . '" class="btn">
+                                                        ดาวน์โหลดใบเสร็จ
+                                                    </a>
+                                                </p>
                                                 <div class="footer">
                                                     <p>ขอขอบคุณสำหรับการสนับสนุนของคุณ!</p>
                                                 </div>
                                             </div>
                                         </body>
                                         </html>
-                                        ';
-                        $mail->send(); // ส่งอีเมล
+                                    ';
+                        $mail->send();
 
                         $response = [
                             'message' => 'success',

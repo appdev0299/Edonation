@@ -11,9 +11,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $amount = $_POST['amount'] ?? null;
         $project_name = $_POST['project_name'] ?? null;
         $address = $_POST['address'] ?? null;
-        $subdistrict = $_POST['subdistrict'] ?? null;
-        $district = $_POST['district'] ?? null;
-        $province = $_POST['province'] ?? null;
+        $district_id = $_POST['district'] ?? null; // เปลี่ยนเป็น district_id
+        $amphure_id = $_POST['amphure'] ?? null; // เปลี่ยนเป็น amphure_id
+        $province_id = $_POST['province'] ?? null; // เปลี่ยนเป็น province_id
 
         // รับค่า project_number จากฟอร์ม
         $project_number = $_POST['project_number'] ?? 'default_project_number';
@@ -21,9 +21,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $gift = isset($_POST['gift']) ? 1 : 0;
         $cc_email = isset($_POST['cc_email']) ? 1 : 0;
 
+        // ตรวจสอบ province
+        $province_sql = "SELECT name_th FROM provinces WHERE id = :province_id";
+        $province_stmt = $pdo->prepare($province_sql);
+        $province_stmt->bindParam(':province_id', $province_id);
+        $province_stmt->execute();
+        $province_row = $province_stmt->fetch(PDO::FETCH_ASSOC);
+        $province_name = $province_row['name_th'] ?? '';
+
+        // ตรวจสอบ amphure
+        $amphure_sql = "SELECT name_th FROM amphures WHERE id = :amphure_id";
+        $amphure_stmt = $pdo->prepare($amphure_sql);
+        $amphure_stmt->bindParam(':amphure_id', $amphure_id);
+        $amphure_stmt->execute();
+        $amphure_row = $amphure_stmt->fetch(PDO::FETCH_ASSOC);
+        $amphure_name = $amphure_row['name_th'] ?? '';
+
+        // ตรวจสอบ district และดึง zip_code
+        $district_sql = "SELECT name_th, zip_code FROM districts WHERE id = :district_id";
+        $district_stmt = $pdo->prepare($district_sql);
+        $district_stmt->bindParam(':district_id', $district_id);
+        $district_stmt->execute();
+        $district_row = $district_stmt->fetch(PDO::FETCH_ASSOC);
+        $district_name = $district_row['name_th'] ?? '';
+        $zip_code = $district_row['zip_code'] ?? '';
+
         // เตรียมคำสั่ง SQL
-        $sql = "INSERT INTO donat_user (type, email, phone, amount, address, subdistrict, district, province, gift, cc_email, created_at, project_number, project_name, status_donat) 
-        VALUES (:type, :email, :phone, :amount, :address, :subdistrict, :district, :province, :gift, :cc_email, CURRENT_TIMESTAMP, :project_number, :project_name, :status_donat)";
+        $sql = "INSERT INTO donat_user (type, email, phone, amount, address, district, amphure, province, gift, cc_email, created_at, project_number, project_name, status_donat,payby, zip_code) 
+                VALUES (:type, :email, :phone, :amount, :address, :district_name, :amphure_name, :province_name, :gift, :cc_email, CURRENT_TIMESTAMP, :project_number, :project_name, :status_donat, :payby, :zip_code)";
 
         $stmt = $pdo->prepare($sql);
 
@@ -33,16 +58,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->bindParam(':phone', $phone);
         $stmt->bindParam(':amount', $amount);
         $stmt->bindParam(':address', $address);
-        $stmt->bindParam(':subdistrict', $subdistrict);
-        $stmt->bindParam(':district', $district);
-        $stmt->bindParam(':province', $province);
+        $stmt->bindParam(':district_name', $district_name);
+        $stmt->bindParam(':amphure_name', $amphure_name);
+        $stmt->bindParam(':province_name', $province_name);
         $stmt->bindParam(':gift', $gift);
         $stmt->bindParam(':cc_email', $cc_email);
         $stmt->bindParam(':project_number', $project_number);
         $stmt->bindParam(':project_name', $project_name);
         $stmt->bindParam(':status_donat', $status_donat);
+        $stmt->bindParam(':payby', $payby);
+        $stmt->bindParam(':zip_code', $zip_code);
         $status_donat = 'online';
-
+        $payby = 'QR CODE';
 
         $stmt->execute();
 

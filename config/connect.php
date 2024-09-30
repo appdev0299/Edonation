@@ -6,7 +6,8 @@ $password = ""; // เปลี่ยนเป็นรหัสผ่านข�
 $dbname = "e-donation"; // เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
 
 try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // ตั้งค่า charset=utf8 เพื่อให้รองรับการใช้งาน utf-8
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     echo "
