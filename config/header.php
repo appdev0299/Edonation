@@ -11,8 +11,7 @@
                   <a href="053-49075" class="phone__number">
                     <i class="icon-phone"></i> <span>053-49075</span>
                   </a>
-                  <p>Please feel free to contact our friendly reception staff with any general or medical enquiry.
-                  </p>
+                                  </p>
                 </div>
               </li>
               <li>
@@ -22,13 +21,6 @@
                 <i class="icon-location"></i><a>110/406 คณะพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่ ถนนอินทวโรรส ตำบลสุเทพ อำเภอเมือง จังหวัดเชียงใหม่ 50200</a>
               </li>
             </ul>
-            <div class="d-flex">
-              <ul class="social-icons list-unstyled mb-0 mr-30">
-                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
-                <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-              </ul>
-            </div>
           </div>
         </div>
       </div>
@@ -62,16 +54,16 @@
             </ul>
           </li>
           <li class="nav__item">
-            <a href="contact-us.html" class="nav__item-link">ช่องทางการติดต่อ</a>
+            <a href="" class="nav__item-link">ช่องทางการติดต่อ</a>
           </li>
           <li class="nav__item has-dropdown">
             <a data-toggle="dropdown" class="dropdown-toggle nav__item-link">ภาษา</a>
             <ul class="dropdown-menu">
               <li class="nav__item">
-                <a href="../service/servce" class="nav__item-link">ของที่ระลึก</a>
+                <a href="" class="nav__item-link">ไทย</a>
               </li>
               <li class="nav__item">
-                <a href="../service/souvenir" class="nav__item-link">เครื่องราชอิสริยาภรณ์</a>
+                <a href="" class="nav__item-link">อังกฤษ</a>
               </li>
             </ul>
           </li>

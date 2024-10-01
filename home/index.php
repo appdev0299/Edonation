@@ -18,16 +18,75 @@ include_once('../config/head.php');
             <div class="slick-carousel m-slides-0"
                 data-slick='{"slidesToShow": 1, "arrows": true, "dots": false, "speed": 700,"fade": true,"cssEase": "linear"}'>
                 <div class="slide-item align-v-h">
-                    <div class="bg-img"><img src="../assets/images/sliders/1.jpg" alt="slide img"></div>
+                    <div class="bg-img"><img src="../assets/images/sliders/3.png" alt="slide img"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+                                <div class="slide__content">
+                                    <h2 class="slide__title">ทุกการให้ ยิ่งใหญ่เสมอ</h2>
+                                    <p class="slide__desc">เชิญชวนร่วมบริจาคเงินเพื่อสนับสนุนการศึกษา คณะพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่</p>
+                                    <ul class="features-list list-unstyled mb-0 d-flex flex-wrap">
+
+                                        <li class="feature-item">
+                                            <div class="feature__icon">
+                                                <i class="fas fa-gift"></i>
+                                            </div>
+                                            <h2 class="feature__title">ของที่ระลึก</h2>
+                                        </li>
+
+                                        <li class="feature-item">
+                                            <div class="feature__icon">
+                                                <span style="font-size: 26px; font-weight: bold;">x2</span>
+                                            </div>
+                                            <h2 class="feature__title">ลดหน่อยภาษี 2 เท่า</h2>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="slide-item align-v-h">
-                    <div class="bg-img"><img src="../assets/images/sliders/2.jpg" alt="slide img"></div>
+                    <div class="bg-img"><img src="../assets/images/sliders/2.png" alt="slide img"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+                                <div class="slide__content">
+                                    <h2 class="slide__title">บริจาคเพื่อทุนการศึกษา</h2>
+                                    <p class="slide__desc">บริจาคเพื่อการศึกษา เพื่อเป็นทุนการศึกษานักศึกษาพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่</p>
+                                    <ul class="features-list list-unstyled mb-0 d-flex flex-wrap">
+                                        <li class="feature-item">
+                                            <div class="feature__icon">
+                                                <span style="font-size: 26px; font-weight: bold;">x2</span>
+                                            </div>
+                                            <h2 class="feature__title">ลดหน่อยภาษี 2 เท่า</h2>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="slide-item align-v-h">
-                    <div class="bg-img"><img src="../assets/images/sliders/3.jpg" alt="slide img"></div>
-                </div>
-                <div class="slide-item align-v-h">
-                    <div class="bg-img"><img src="../assets/images/sliders/4.jpg" alt="slide img"></div>
+                    <div class="bg-img"><img src="../assets/images/sliders/1.png" alt="slide img"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-8">
+                                <div class="slide__content">
+                                    <h2 class="slide__title">บริจาคเพื่อสาธารณะประโยชน์</h2>
+                                    <p class="slide__desc">บริจาคเพื่อสาธารณะประโยชน์และการกุศลอื่น ๆ</p>
+                                    <ul class="features-list list-unstyled mb-0 d-flex flex-wrap">
+                                        <li class="feature-item">
+                                            <div class="feature__icon">
+                                                <span style="font-size: 26px; font-weight: bold;">x1</span>
+                                            </div>
+                                            <h2 class="feature__title">ลดหน่อยภาษี 1 เท่า</h2>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

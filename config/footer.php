@@ -5,13 +5,6 @@
                 <div class="col-sm-12 col-md-12 col-lg-3">
                     <div class="footer-widget-about">
                         <img src="../assets/images/logo/logo-nurse.svg" alt="logo" class="mb-30">
-                        <p class="color-gray">Our goal is to deliver quality of care in a courteous, respectful, and
-                            compassionate manner. We hope you will allow us to care for you and strive to be the first and best
-                            choice for your family healthcare.
-                        </p>
-                        <a href="appointment.html" class="btn btn__primary btn__primary-style2 btn__link">
-                            <span>Make Appointment</span> <i class="icon-arrow-right"></i>
-                        </a>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-2 offset-lg-1">
@@ -19,10 +12,10 @@
                         <h6 class="footer-widget__title">เมนู</h6>
                         <nav>
                             <ul class="list-unstyled">
-                                <li><a href="#">หน้าหลัก</a></li>
-                                <li><a href="#">รายนามผู้บริจาค</a></li>
-                                <li><a href="#">สิทธิประโยชน์</a></li>
-                                <li><a href="#">ช่องทางการติดต่อ</a></li>
+                                <li><a href="../home/" style="color: white;">หน้าหลัก</a></li>
+                                <li><a href="../list/" style="color: white;">รายนามผู้บริจาค</a></li>
+                                <li><a href="../service/servce" style="color: white;">สิทธิประโยชน์</a></li>
+                                <li><a href="" style="color: white;">ช่องทางการติดต่อ</a></li>
                             </ul>
                         </nav>
                     </div>
