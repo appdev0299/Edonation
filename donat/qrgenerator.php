@@ -132,7 +132,7 @@ include_once('../config/head.php');
 
                                             // กำหนดสีและฟอนต์สำหรับการวาดข้อความ
                                             $textColor = imagecolorallocate($backgroundImage, 255, 0, 0); // สีแดง
-                                            $fontFile = 'font/NotoSansThai-Regular.ttf'; // เส้นทางของฟอนต์ TrueType
+                                            $fontFile = __DIR__ . '/font/NotoSansThai-Regular.ttf';
 
                                             // ข้อความที่ต้องการวาด
                                             $months = array(

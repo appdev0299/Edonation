@@ -1,14 +1,13 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once '../config/connect.php';
-require '../vendor/autoload.php'; // อย่าลืมรวม autoload ของ Composer
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require_once "../phpmailer/PHPMailerAutoload.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
 if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data['id'])) {
-    $billPaymentRef1 = filter_var($data['billPaymentRef1'], FILTER_SANITIZE_STRING);
+    $billPaymentRef1 = htmlspecialchars($data['billPaymentRef1'], ENT_QUOTES, 'UTF-8');
     $amount = filter_var($data['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     $created_at = date('Y-m-d', strtotime($data['created_at']));
 
@@ -22,8 +21,8 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
-            $copy_sql = "INSERT INTO donat (billPaymentRef1, type, email, phone, amount, address, district, amphure, province, zip_code, gift, cc_email, project_number, project_name, created_at, payby, payerAccountName, billPaymentRef2) 
-             SELECT du.billPaymentRef1, du.type, du.email, du.phone, du.amount, du.address, du.district, du.amphure, du.province, du.zip_code, du.gift, du.cc_email, du.project_number, du.project_name, du.created_at, du.payby, jd.payerAccountName, jd.billPaymentRef2
+            $copy_sql = "INSERT INTO donat (billPaymentRef1, type, email, phone, amount, address, district, amphure, province, zip_code, gift, cc_email, project_number, project_name, created_at, payby,status_donat, payerAccountName, billPaymentRef2) 
+             SELECT du.billPaymentRef1, du.type, du.email, du.phone, du.amount, du.address, du.district, du.amphure, du.province, du.zip_code, du.gift, du.cc_email, du.project_number, du.project_name, du.created_at, du.payby,du.status_donat, jd.payerAccountName, jd.billPaymentRef2
              FROM donat_user du
              JOIN json_donat jd ON du.billPaymentRef1 = jd.billPaymentRef1
              WHERE du.billPaymentRef1 = :billPaymentRef1";
@@ -34,7 +33,7 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
                 if ($copy_stmt->rowCount() > 0) {
                     // ดึงข้อมูลจากตาราง donat
                     $last_insert_id = $pdo->lastInsertId();
-                    $select_sql = "SELECT billPaymentRef1, payerAccountName, amount, email, project_name, id,created_at 
+                    $select_sql = "SELECT billPaymentRef1, payerAccountName, amount, email, project_name, id, created_at 
                                    FROM donat 
                                    WHERE id = :id";
                     $select_stmt = $pdo->prepare($select_sql);
@@ -47,12 +46,13 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
                     $mail = new PHPMailer(true); // เริ่มต้น PHPMailer
                     try {
                         // ตั้งค่าการตั้งค่าเซิร์ฟเวอร์
+                        $mail->CharSet = "UTF-8";
                         $mail->isSMTP();
                         $mail->Host = 'smtp.gmail.com'; // กำหนดเซิร์ฟเวอร์ SMTP
                         $mail->SMTPAuth = true;
                         $mail->Username = 'nursecmu.edonation@gmail.com'; // อีเมลที่ใช้ส่ง
                         $mail->Password = 'hhhp ynrg cqpb utzi'; // รหัสผ่านอีเมล
-                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // ใช้การเข้ารหัส TLS
+                        $mail->SMTPSecure = 'tls';
                         $mail->Port = 587; // พอร์ตสำหรับการเชื่อมต่อ
 
                         // ตั้งค่าผู้ส่งและผู้รับ
@@ -69,14 +69,9 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
                         if ($created_at) {
                             // สร้าง DateTime object
                             $dateTime = new DateTime($created_at);
-
-                            // ตั้งค่าภาษาไทย
-                            setlocale(LC_TIME, 'th_TH.UTF-8');
-
-                            // แปลงวันที่เป็นปี พ.ศ. และรูปแบบ dd/mm/yyyy
-                            $thai_date = $dateTime->format('d') . ' ' .
-                                strftime('%B', $dateTime->getTimestamp()) . ' ' .
-                                ($dateTime->format('Y') + 543); // เพิ่ม 543 เพื่อแปลงเป็นปี พ.ศ.
+                            $dateTime->setTimezone(new DateTimeZone('Asia/Bangkok')); // ตั้งโซนเวลา
+                            $formatter = new IntlDateFormatter('th_TH', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+                            $thai_date = $formatter->format($dateTime);
                         } else {
                             $thai_date = 'ไม่ทราบวันที่';
                         }
@@ -88,120 +83,116 @@ if (isset($data['billPaymentRef1'], $data['amount'], $data['created_at'], $data[
                                         <head>
                                             <meta charset="UTF-8">
                                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                            <link rel="preconnect" href="https://fonts.googleapis.com">
+                                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                                            <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
                                             <style>
                                                 body {
-                                                    font-family: Arial, sans-serif;
-                                                    background-color: #f4f4f4;
+                                                    font-family: "Noto Sans Thai", sans-serif;
+                                                    background-color: #ffffff;
                                                     margin: 0;
                                                     padding: 20px;
                                                 }
+
                                                 .container {
                                                     max-width: 600px;
                                                     margin: 0 auto;
-                                                    background-color: #ffffff;
+                                                    background-color: #f4f4f4;
                                                     border-radius: 5px;
                                                     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
                                                     padding: 20px;
                                                 }
+
+                                                .header {
+                                                    background-color: #ff6a00;
+                                                    padding: 20px;
+                                                    text-align: left;
+                                                    border-top-left-radius: 5px;
+                                                    border-top-right-radius: 5px;
+                                                }
+
+                                                .header img {
+                                                    width: 200px;
+                                                    margin-bottom: 20px;
+                                                }
+
                                                 h1 {
                                                     color: #003049;
-                                                    text-align: center;
+                                                    font-size: 24px;
                                                 }
+
                                                 p {
                                                     font-size: 16px;
                                                     line-height: 1.6;
+                                                    color: #333;
                                                 }
-                                                .highlight {
-                                                    background-color: #ffcc00;
-                                                    padding: 5px;
-                                                    border-radius: 3px;
-                                                    font-weight: bold;
-                                                }
+
                                                 .footer {
                                                     text-align: center;
                                                     margin-top: 20px;
                                                     font-size: 12px;
                                                     color: #777;
                                                 }
+
                                                 .btn {
                                                     display: inline-block;
                                                     padding: 10px 15px;
-                                                    background-color: #ffaa00; /* สีพื้นหลังของปุ่ม */
-                                                    color: white; /* สีของข้อความ */
-                                                    text-decoration: none; /* ไม่มีขีดเส้นใต้ */
-                                                    border-radius: 5px; /* ขอบมน */
-                                                    text-align: center; /* จัดให้อยู่กลาง */
-                                                    font-weight: bold; /* ตัวหนา */
-                                                    transition: background-color 0.3s; /* เอฟเฟกต์การเปลี่ยนสี */
+                                                    background-color: #ff6a00;
+                                                    color: white;
+                                                    text-decoration: none;
+                                                    border-radius: 5px;
+                                                    text-align: center;
+                                                    font-weight: bold;
+                                                    transition: background-color 0.3s;
+                                                    margin: 20px 0;
                                                 }
+
                                                 .btn:hover {
-                                                    background-color: #f0d193; /* สีเมื่อชี้เมาส์ */
+                                                    background-color: #f8c49c;
                                                 }
                                             </style>
                                         </head>
+
                                         <body>
                                             <div class="container">
-                                                <h1>ขอบคุณสำหรับการบริจาคของคุณ!</h1>
-                                                <p>รายละเอียดการบริจาคของคุณ:</p>
-                                                <p>เลขอ้างอิง : <span class="highlight">' . htmlspecialchars($donat_data['billPaymentRef1']) . '</span></p>
-                                                <p>จำนวนเงิน : <span class="highlight">' . number_format($donat_data['amount'], 2) . ' บาท</span></p>
-                                                <p>จาก : <span class="highlight">' . htmlspecialchars($donat_data['payerAccountName']) . '</span></p>
-                                                <p>โครงการ : <span class="highlight">' . htmlspecialchars($donat_data['project_name']) . '</span></p>
-                                                <p>วันที่ : <span class="highlight">' . htmlspecialchars($thai_date) . '</span></p>
-                                                <p>
-                                                    <a href="http://localhost/github-appdev/Edonation/list/pdf_maker.php?id=' . htmlspecialchars($donat_data['id']) . '" class="btn">
-                                                        ดาวน์โหลดใบเสร็จ
-                                                    </a>
-                                                </p>
+                                                <div class="header">
+                                                    <img src="https://app.nurse.cmu.ac.th/appdev/Edonation/assets/images/logo/logo-nurse-w.png" alt="Logo">
+                                                </div>
+                                                <h1>ข้อความอัตโนมัติ : ยืนยันการชำระเงิน ผ่าน NurseCMU e-Donation</h1>
+                                                <p>โครงการ : <span>' . htmlspecialchars($donat_data['project_name']) . '</span></p>
+                                                <p>เลขอ้างอิง : <span>' . htmlspecialchars($donat_data['billPaymentRef1']) . '</span></p>
+                                                <p>จำนวนเงิน : <span>' . number_format($donat_data['amount'], 2) . ' บาท</span></p>
+                                                <p>จาก : <span>' . htmlspecialchars($donat_data['payerAccountName']) . '</span></p>
+                                                <p>วันที่ : <span>' . $thai_date . '</span></p>
+                                                <a href="https://example.com/donation-details" class="btn">ใบเสร็จรับเงิน</a>
+                                                <p>ขอแสดงความนับถือ คณะพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่</p>
+                                                <p>หมายเหตุ :<br>
+                                                    - ใบเสร็จรับเงินจะมีผลสมบูรณ์ต่อเมื่อได้รับชำระเงินเรียบร้อยแล้วและมีลายเซ็นของผู้รับเงินครบถ้วน<br>
+                                                    - อีเมลฉบับนี้เป็นการแจ้งข้อมูลโดยอัตโนมัติ กรุณาอย่าตอบกลับ หากต้องการสอบถามรายละเอียดเพิ่มเติม โทร.
+                                                    053-949075 | นางสาวชนิดา ต้นพิพัฒน์ งานการเงิน การคลังและพัสดุ คณะพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่</p>
+                                                <br>
                                                 <div class="footer">
-                                                    <p>ขอขอบคุณสำหรับการสนับสนุนของคุณ!</p>
+                                                    <p>NurseCMU e-Donation | Communications and Branding Department</p>
+                                                    <p>&copy; 2024 Faculty of Nursing Chiang Mai University, All Rights Reserved.</p>
                                                 </div>
                                             </div>
                                         </body>
-                                        </html>
-                                    ';
+                                        </html>';
                         $mail->send();
-
-                        $response = [
-                            'message' => 'success',
-                            'details' => 'Data copied from donat_user to donat successfully and email sent',
-                            'email_data' => $donat_data // ส่งข้อมูลไปยัง email
-                        ];
+                        echo json_encode(['success' => true, 'message' => 'ส่งอีเมลเรียบร้อยแล้ว']);
                     } catch (Exception $e) {
-                        $response = [
-                            'message' => 'email_failed',
-                            'details' => 'Email could not be sent. Mailer Error: ' . $mail->ErrorInfo
-                        ];
+                        echo json_encode(['success' => false, 'message' => 'ส่งอีเมลไม่สำเร็จ: ' . $mail->ErrorInfo]);
                     }
                 } else {
-                    $response = [
-                        'message' => 'no_rows_copied',
-                        'details' => 'No rows were copied to donat'
-                    ];
+                    echo json_encode(['success' => false, 'message' => 'การคัดลอกข้อมูลไม่สำเร็จ']);
                 }
-            } else {
-                $response = [
-                    'message' => 'insert_failed',
-                    'details' => 'Failed to copy data from donat_user to donat'
-                ];
             }
         } else {
-            $response = [
-                'message' => 'not_found',
-                'details' => 'No data found for billPaymentRef1: ' . $billPaymentRef1 . ', amount: ' . $amount . ', date: ' . $created_at
-            ];
+            echo json_encode(['success' => false, 'message' => 'ไม่พบข้อมูลการบริจาค']);
         }
     } catch (PDOException $e) {
-        $response = [
-            'message' => 'db_error',
-            'details' => $e->getMessage()
-        ];
+        echo json_encode(['success' => false, 'message' => 'เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล: ' . $e->getMessage()]);
     }
 } else {
-    $response = [
-        'message' => 'invalid_data'
-    ];
+    echo json_encode(['success' => false, 'message' => 'ข้อมูลไม่ถูกต้อง']);
 }
-
-header('Content-Type: application/json');
-echo json_encode($response);

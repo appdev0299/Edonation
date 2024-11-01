@@ -1,8 +1,8 @@
 <?php
 $hostname = "localhost";
-$username = "root";
-$password = "";
-$database = "e-donation";
+$username = "edonation";
+$password = "edonate@FON";
+$database = "edonation";
 $con = mysqli_connect($hostname, $username, $password, $database);
 
 // Check connection

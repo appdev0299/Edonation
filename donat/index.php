@@ -25,7 +25,7 @@ include_once('../config/head.php');
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="contact-panel mb-50">
-                                <form class="contact-panel__form" method="post" id="contactForm1">
+                                <form class="contact-panel__form" method="post" id="contactForm">
                                     <div class="row">
                                         <?php
                                         // ตรวจสอบว่ามีการส่ง project_number มาหรือไม่
@@ -247,7 +247,6 @@ include_once('../config/head.php');
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="script_province.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-
     <script>
         document.getElementById('contactForm').addEventListener('submit', function(event) {
             var type = document.getElementById('type').value;

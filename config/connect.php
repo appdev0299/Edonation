@@ -1,9 +1,9 @@
 <?php
 // connect.php
 $servername = "localhost";
-$username = "root";
-$password = ""; // เปลี่ยนเป็นรหัสผ่านของคุณ
-$dbname = "e-donation"; // เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
+$username = "edonation";
+$password = "edonate@FON"; // เปลี่ยนเป็นรหัสผ่านของคุณ
+$dbname = "edonation"; // เปลี่ยนเป็นชื่อฐานข้อมูลของคุณ
 
 try {
     // ตั้งค่า charset=utf8 เพื่อให้รองรับการใช้งาน utf-8
